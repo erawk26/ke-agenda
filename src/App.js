@@ -89,7 +89,7 @@ function App() {
           ))}
         </ul>
       </header>
-      <EditEvent payload={editEvent} updateOnSubmit={handleEventEdit} />
+      <EditEvent payload={editEvent} events={events} updateOnSubmit={handleEventEdit} />
       <MyCalendar events={events} updateOnSelect={handleCalendarSelect} />
     </div>
   );
