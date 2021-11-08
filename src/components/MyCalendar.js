@@ -1,4 +1,5 @@
 import { Calendar, Views, dateFnsLocalizer } from "react-big-calendar";
+import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import format from "date-fns/format";
 import parse from "date-fns/parse";
 import startOfWeek from "date-fns/startOfWeek";
@@ -7,6 +8,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 const locales = {
   "en-US": require("date-fns/locale/en-US"),
 };
+const DnDCalendar = withDragAndDrop(Calendar);
 const localizer = dateFnsLocalizer({
   format,
   parse,
@@ -15,17 +17,19 @@ const localizer = dateFnsLocalizer({
   locales,
 });
 export default function MyCalendar({ events, updateOnSelect }) {
-  const handleSlotSelect = (evt) => updateOnSelect({ slotSelect: evt });
-  const handleEventSelect = (evt) => updateOnSelect({ eventSelect: evt });
-
+  const handleSlotSelect = (evt) => updateOnSelect({ create: evt });
+  const handleEventDrop = (evt) => updateOnSelect({ move: evt });
+  const handleEventSelect = (evt) => updateOnSelect({ select: evt });
+  const now = new Date();
   return (
-    <Calendar
+    <DnDCalendar
       selectable
       localizer={localizer}
       events={events}
       defaultView={Views.WEEK}
-      scrollToTime={new Date(1970, 1, 1, 6)}
-      defaultDate={new Date(2015, 3, 12)}
+      scrollToTime={now}
+      defaultDate={now}
+      onEventDrop={handleEventDrop}
       onSelectEvent={handleEventSelect}
       onSelectSlot={handleSlotSelect}
       style={{ height: "900px" }}

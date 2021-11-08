@@ -1,10 +1,12 @@
 import { useState, useEffect } from "react";
 import schedulesSvc from "./services/schedules";
 import MyCalendar from "./components/MyCalendar";
+import EditEvent from "./components/EditEvent";
 import "./App.css";
 function App() {
   const [schedules, setSchedules] = useState([]);
   const [events, setEvents] = useState([]);
+  const [editEvent, seteditEvent] = useState(null);
   const onMounted = () => {
     schedulesSvc
       .getAll()
@@ -21,7 +23,16 @@ function App() {
         // }, 5000);
       });
   };
-  const formatEvents = ({ firstName, lastName, id, datesArr, comments }) =>
+  const formatEvents = ({
+    firstName,
+    lastName,
+    id,
+    datesArr,
+    comments,
+    email,
+    created,
+    modified,
+  }) =>
     datesArr
       .map((obj, i) => {
         const date = Object.keys(obj);
@@ -45,6 +56,8 @@ function App() {
             ),
             title: `${firstName} ${lastName}`,
             desc: comments,
+            email,
+            timestamp: new Date(modified ?? created).getTime(),
           };
         });
         return arr;
@@ -56,7 +69,15 @@ function App() {
     // console.log({ evts });
     setEvents([...evts]);
   }, [schedules]);
-  const handleCalendarSelect = (evt) => console.log(evt);
+  const handleCalendarSelect = (evt) => {
+    console.log(evt);
+    const [eventName, data] = Object.entries(evt)[0];
+    seteditEvent(evt);
+  };
+  const handleEventEdit = (evt) => {
+    console.log(evt);
+    seteditEvent(null);
+  };
   return (
     <div className="App">
       <header className="App-header">
@@ -68,6 +89,7 @@ function App() {
           ))}
         </ul>
       </header>
+      <EditEvent payload={editEvent} updateOnSubmit={handleEventEdit} />
       <MyCalendar events={events} updateOnSelect={handleCalendarSelect} />
     </div>
   );
